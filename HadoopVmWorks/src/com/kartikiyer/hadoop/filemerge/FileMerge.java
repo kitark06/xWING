@@ -8,7 +8,6 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.CombineTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
@@ -30,11 +29,11 @@ public class FileMerge extends Configured implements Tool
 	public int run(String[] args) throws Exception
 	{
 		Job job = Job.getInstance();
-		job.setJobName("FileMerger");
+		job.setJobName("FileMerger_Combiner");
 
 		job.getConfiguration().set("mapreduce.app-submission.cross-platform", "true");
-		// job.getConfiguration().set("mapred.job.reuse.jvm.num.tasks", "-1");
-
+		job.getConfiguration().set("mapreduce.map.memory.mb", "1024");
+		job.getConfiguration().set("mapreduce.reduce.memory.mb", "1024");
 
 		job.setJarByClass(FileMerge.class);
 		job.setMapperClass(FileMergeMapper.class);
@@ -43,7 +42,7 @@ public class FileMerge extends Configured implements Tool
 		job.setMapOutputKeyClass(LongWritable.class);
 		job.setMapOutputValueClass(Text.class);
 
-		job.setInputFormatClass(CombineTextInputFormat.class);
+		job.setInputFormatClass(Converger.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
 
 		job.setOutputKeyClass(Text.class);
@@ -65,6 +64,8 @@ public class FileMerge extends Configured implements Tool
 
 		System.out.println("Starting job");
 
-		return job.waitForCompletion(true) ? 1 : 0;
+		job.submit();
+		return 1;
+//		return job.waitForCompletion(false) ? 1 : 0;
 	}
 }
