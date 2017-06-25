@@ -19,7 +19,7 @@ public class FileMerge extends Configured implements Tool
 {
 	public static void main(String[] args) throws Exception
 	{
-		System.setProperty("hadoop.home.dir", "C:\\winutil\\");
+		System.setProperty("hadoop.home.dir", "C:\\winutils-master\\hadoop-2.7.1");
 		System.setProperty("HADOOP_USER_NAME", "cloudera");
 
 		ToolRunner.run(new FileMerge(), args);
